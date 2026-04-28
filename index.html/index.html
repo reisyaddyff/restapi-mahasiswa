@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Data Mahasiswa</title>
+</head>
+<body>
+
+<h2>Input Data Mahasiswa</h2>
+
+<form id="form">
+    <label>Nama:</label><br>
+    <input type="text" id="nama"><br><br>
+
+    <label>NIM:</label><br>
+    <input type="text" id="nim"><br><br>
+
+    <label>Domisili:</label><br>
+    <input type="text" id="domisili"><br><br>
+
+    <button type="submit">Tambah</button>
+</form>
+
+<hr>
+
+<h3>List Mahasiswa</h3>
+
+<table border="1" cellpadding="8">
+    <thead>
+        <tr>
+            <th>Nama</th>
+            <th>NIM</th>
+            <th>Domisili</th>
+        </tr>
+    </thead>
+    <tbody id="tabel"></tbody>
+</table>
+
+<script>
+const form = document.getElementById('form');
+const tabel = document.getElementById('tabel');
+
+function loadData() {
+    fetch('http://localhost:3000/mahasiswa')
+        .then(res => res.json())
+        .then(data => {
+            tabel.innerHTML = '';
+            data.forEach(m => {
+                tabel.innerHTML += `
+                    <tr>
+                        <td>${m.nama}</td>
+                        <td>${m.nim}</td>
+                        <td>${m.domisili}</td>
+                    </tr>
+                `;
+            });
+        });
+}
+
+form.addEventListener('submit', function(e) {
+    e.preventDefault();
+
+    const data = {
+        nama: document.getElementById('nama').value,
+        nim: document.getElementById('nim').value,
+        domisili: document.getElementById('domisili').value
+    };
+
+    fetch('http://localhost:3000/mahasiswa', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data)
+    })
+    .then(res => res.json())
+    .then(() => {
+        form.reset();
+        loadData();
+    });
+});
+
+loadData();
+</script>
+
+</body>
+</html>
